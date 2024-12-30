@@ -1,16 +1,14 @@
-const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors')
+const whatsappRoutes = require('./routes/whatsappRoutes');
 
-const client = new Client({
-    authStrategy: new LocalAuth()
-});
+const app = express()
+app.use(cors())
+app.use(express.json())
 
-client.on('ready', () => {
-    console.log('Client is ready!');
-});
+app.use('/api/whatsapp', whatsappRoutes);
 
-client.on('qr', qr => {
-    qrcode.generate(qr, {small: true});
-});
-
-client.initialize();
+app.listen(process.env.port, () => {
+    console.log(`Server is running on http://localhost:${process.env.port}`)
+})
