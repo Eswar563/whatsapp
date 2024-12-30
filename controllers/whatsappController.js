@@ -43,6 +43,7 @@ const sendMessage = async (req, res) => {
         cron.schedule(scheduleTime, async () => {
             for (let formattedNumber of formattedNumbers) {
                 try {
+                    await new Promise(resolve => setTimeout(resolve, 5000)); 
                     await client.sendMessage(formattedNumber, message);
                     console.log(`Scheduled message sent to ${formattedNumber}`);
                 } catch (error) {
@@ -55,6 +56,7 @@ const sendMessage = async (req, res) => {
     } else {
         try {
             for (let formattedNumber of formattedNumbers) {
+                await new Promise(resolve => setTimeout(resolve, 5000)); 
                 await client.sendMessage(formattedNumber, message);
                 console.log(`Message sent to ${formattedNumber}`);
             }
