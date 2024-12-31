@@ -41,7 +41,6 @@ const sendMessage = async (req, res) => {
 
     const send = async (formattedNumber) => {
         try {
-            await new Promise(resolve => setTimeout(resolve, 5000)); 
             if (imageUrl) {
                 const media = await MessageMedia.fromUrl(imageUrl);
                 await client.sendMessage(formattedNumber, media, { caption: message });
