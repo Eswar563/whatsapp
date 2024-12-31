@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const { Client, LocalAuth } = require('whatsapp-web.js');
+const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 let isClientReady = false;
@@ -29,7 +29,7 @@ const generateQrcode = async (req, res) => {
 }
 
 const sendMessage = async (req, res) => {
-    const { number, message, scheduleTime } = req.body;
+    const { number, message, scheduleTime, imageUrl } = req.body;
 
     const formattedNumbers = Array.isArray(number) 
         ? number.map(num => num.includes('@c.us') ? num : `91${num}@c.us`)
@@ -39,16 +39,26 @@ const sendMessage = async (req, res) => {
         return res.status(503).send({ error: 'Client is not ready yet' });
     }
 
+    const send = async (formattedNumber) => {
+        try {
+            await new Promise(resolve => setTimeout(resolve, 5000)); 
+            if (imageUrl) {
+                const media = await MessageMedia.fromUrl(imageUrl);
+                await client.sendMessage(formattedNumber, media, { caption: message });
+                console.log(`Image sent to ${formattedNumber}`);
+            } else {
+                await client.sendMessage(formattedNumber, message);
+                console.log(`Message sent to ${formattedNumber}`);
+            }
+        } catch (error) {
+            console.error(`Failed to send message to ${formattedNumber}: ${error.message}`);
+        }
+    };
+
     if (scheduleTime) {
         cron.schedule(scheduleTime, async () => {
             for (let formattedNumber of formattedNumbers) {
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 5000)); 
-                    await client.sendMessage(formattedNumber, message);
-                    console.log(`Scheduled message sent to ${formattedNumber}`);
-                } catch (error) {
-                    console.error(`Failed to send scheduled message to ${formattedNumber}: ${error.message}`);
-                }
+                await send(formattedNumber);
             }
         });
 
@@ -56,9 +66,7 @@ const sendMessage = async (req, res) => {
     } else {
         try {
             for (let formattedNumber of formattedNumbers) {
-                await new Promise(resolve => setTimeout(resolve, 5000)); 
-                await client.sendMessage(formattedNumber, message);
-                console.log(`Message sent to ${formattedNumber}`);
+                await send(formattedNumber);
             }
             res.send({ status: 'Message(s) sent!' });
         } catch (error) {
