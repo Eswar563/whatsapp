@@ -3,9 +3,10 @@ Content-Type: application/json
 
 {
     "number":["8500191936", "9573131446"],
-    "message":"Hi",
-    "scheduleTime": "35 23 * * *"
+    "message":"Happy New Year 2025",
+    "imageUrl": "https://khadsecollege.in/wp-content/uploads/2024/12/Happy-New-Year-2025-Wishes-1448x2048.webp",
+    "scheduleTime": "48 14 * * *"
 }
 
 ###
-GET http://localhost:3000/api/whatsapp/generateqrcode
+GET http://13.233.122.44:3000/api/whatsapp/generateqrcode
