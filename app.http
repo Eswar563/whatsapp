@@ -9,4 +9,4 @@ Content-Type: application/json
 }
 
 ###
-GET http://13.233.122.44:3000/api/whatsapp/generateqrcode
+GET http://localhost:3000/api/whatsapp/generateqrcode
