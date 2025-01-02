@@ -2,7 +2,7 @@ POST http://localhost:3000/api/whatsapp/sendmessage
 Content-Type: application/json
 
 {
-    "number":["8500191936", ""],
+    "number":["", ""],
     "message":"Happy New Year 2025",
     "imageUrl": "https://khadsecollege.in/wp-content/uploads/2024/12/Happy-New-Year-2025-Wishes-1448x2048.webp",
     "scheduleTime": "48 14 * * *"
