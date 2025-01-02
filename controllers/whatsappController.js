@@ -1,13 +1,13 @@
 const cron = require('node-cron');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+const qrcode = require('qrcode');
 
 let isClientReady = false;
 
 const client = new Client({
-    puppeteer: {
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    }
+    authStrategy: new LocalAuth({
+        dataPath: 'session'
+    })
 });
 
 client.on('ready', () => {
@@ -15,18 +15,20 @@ client.on('ready', () => {
     isClientReady = true;
 });
 
-client.on('qr', qr => {
-    qrcode.generate(qr, { small: true });
-});
-
-
 client.initialize();
 
 const generateQrcode = async (req, res) => {
-    
-    res.send('qr')
+    client.on('qr', async (qr) => {
+        try {
+            const qrImageBuffer = await qrcode.toBuffer(qr);
+            res.set('Content-Type', 'image/png');
+            res.send(qrImageBuffer);  
+        } catch (err) {
+            res.status(500).send('Error generating QR code');
+        }
+    });
+};
 
-}
 
 const sendMessage = async (req, res) => {
     const { number, message, scheduleTime, imageUrl } = req.body;
